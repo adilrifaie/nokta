@@ -11,6 +11,7 @@ import {
   ScrollView,
 } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import * as Clipboard from 'expo-clipboard';
 import { analyzeNotes, IdeaCard } from '../services/claudeApi';
 import { RootStackParamList } from '../App';
 import NoktaMascot, { MascotEmotion } from '../components/NoktaMascot';
@@ -38,6 +39,15 @@ export default function DumpScreen({ navigation }: Props) {
   const [text, setText] = useState('');
   const [loading, setLoading] = useState(false);
   const [mascotEmotion, setMascotEmotion] = useState<MascotEmotion>('idle');
+
+  async function handlePasteClipboard() {
+    const content = await Clipboard.getStringAsync();
+    if (!content.trim()) {
+      Alert.alert('Clipboard empty', 'Nothing found on the clipboard.');
+      return;
+    }
+    setText(prev => prev ? prev + '\n' + content : content);
+  }
 
   async function handleAnalyze() {
     if (!text.trim()) {
@@ -83,6 +93,10 @@ export default function DumpScreen({ navigation }: Props) {
         </Text>
 
         <NoktaMascot emotion={mascotEmotion} />
+
+        <TouchableOpacity style={styles.clipboardBtn} onPress={handlePasteClipboard}>
+          <Text style={styles.clipboardBtnText}>📋 Paste from Clipboard</Text>
+        </TouchableOpacity>
 
         <TextInput
           style={styles.input}
@@ -143,6 +157,23 @@ const styles = StyleSheet.create({
   sub: { color: '#888', fontSize: 13, marginBottom: 16, lineHeight: 20 },
   langTag: { color: '#6c47ff', fontWeight: '600' },
 
+  clipboardBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'flex-start',
+    backgroundColor: '#1a1a24',
+    borderWidth: 1,
+    borderColor: '#2a2a38',
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    marginBottom: 10,
+  },
+  clipboardBtnText: {
+    color: '#6c47ff',
+    fontSize: 13,
+    fontWeight: '600',
+  },
   input: {
     backgroundColor: '#1a1a24',
     color: '#e0e0e0',
