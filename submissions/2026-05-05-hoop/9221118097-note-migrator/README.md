@@ -11,7 +11,7 @@ Supports **English**, **Malay**, and **Turkish** input (or any mix).
 
 ## Expo Link
 
-[expo.dev/accounts/nadilr/projects/app/builds/82770e4e-6214-4b23-8bc7-04b2c0c3372a](https://expo.dev/accounts/nadilr/projects/app/builds/82770e4e-6214-4b23-8bc7-04b2c0c3372a)
+[https://expo.dev/accounts/nadilr/projects/app/builds/3af41197-c45d-4e1d-8c3a-520a2bde1442](https://expo.dev/accounts/nadilr/projects/app/builds/82770e4e-6214-4b23-8bc7-04b2c0c3372a)
 
 ## Demo Video
 
