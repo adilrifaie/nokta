@@ -8,8 +8,6 @@ import {
   Alert,
   Platform,
   ScrollView,
-  Modal,
-  KeyboardAvoidingView,
 } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RouteProp } from '@react-navigation/native';
@@ -45,9 +43,6 @@ export default function ReviewScreen({ navigation, route }: Props) {
   const [editing, setEditing] = useState(false);
   const [editTitle, setEditTitle] = useState('');
   const [editSummary, setEditSummary] = useState('');
-  const [rejectModalVisible, setRejectModalVisible] = useState(false);
-  const [rejectReason, setRejectReason] = useState('');
-  const [rejectedReasons, setRejectedReasons] = useState<Record<string, string>>({});
 
   const card = cards[index];
   const isLast = index === cards.length - 1;
@@ -74,15 +69,6 @@ export default function ReviewScreen({ navigation, route }: Props) {
   }
 
   function handleReject() {
-    setRejectReason('');
-    setRejectModalVisible(true);
-  }
-
-  function confirmReject() {
-    if (rejectReason.trim()) {
-      setRejectedReasons(prev => ({ ...prev, [card.id]: rejectReason.trim() }));
-    }
-    setRejectModalVisible(false);
     advance(approved);
   }
 
@@ -160,13 +146,6 @@ export default function ReviewScreen({ navigation, route }: Props) {
             🔗 Lines: {card.mergedFrom.join(', ')}
           </Text>
 
-          {rejectedReasons[card.id] ? (
-            <View style={styles.rejectReasonBadge}>
-              <Text style={styles.rejectReasonLabel}>✗ Rejected: </Text>
-              <Text style={styles.rejectReasonText}>{rejectedReasons[card.id]}</Text>
-            </View>
-          ) : null}
-
           <View style={styles.tagsRow}>
             {card.tags.map(tag => (
               <View key={tag} style={styles.tag}>
@@ -200,42 +179,6 @@ export default function ReviewScreen({ navigation, route }: Props) {
           </TouchableOpacity>
         </View>
       </ScrollView>
-
-      {/* Rejection reason modal */}
-      <Modal visible={rejectModalVisible} transparent animationType="fade">
-        <KeyboardAvoidingView
-          style={styles.modalBackdrop}
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        >
-          <View style={styles.modalSheet}>
-            <Text style={styles.modalTitle}>Why are you rejecting this?</Text>
-            <Text style={styles.modalSub}>Optional — helps you remember later</Text>
-            <TextInput
-              style={styles.modalInput}
-              value={rejectReason}
-              onChangeText={setRejectReason}
-              placeholder="e.g. Already knew this, irrelevant topic…"
-              placeholderTextColor="#555"
-              multiline
-              autoFocus
-            />
-            <View style={styles.modalActions}>
-              <TouchableOpacity
-                style={styles.modalSkipBtn}
-                onPress={confirmReject}
-              >
-                <Text style={styles.modalSkipText}>Skip</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.modalRejectBtn}
-                onPress={confirmReject}
-              >
-                <Text style={styles.modalRejectText}>✗ Reject</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </KeyboardAvoidingView>
-      </Modal>
     </View>
   );
 }
@@ -308,62 +251,6 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
 
-  rejectReasonBadge: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    backgroundColor: '#2a1a1a',
-    borderRadius: 6,
-    padding: 8,
-    marginTop: 8,
-  },
-  rejectReasonLabel: { color: '#ff6b6b', fontSize: 11, fontWeight: '700' },
-  rejectReasonText: { color: '#ff6b6b', fontSize: 11, flex: 1 },
-  // Rejection modal
-  modalBackdrop: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.6)',
-    justifyContent: 'flex-end',
-  },
-  modalSheet: {
-    backgroundColor: '#1a1a24',
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    padding: 24,
-    paddingBottom: 40,
-  },
-  modalTitle: { color: '#fff', fontSize: 17, fontWeight: '700', marginBottom: 4 },
-  modalSub: { color: '#666', fontSize: 12, marginBottom: 16 },
-  modalInput: {
-    backgroundColor: '#12121a',
-    color: '#e0e0e0',
-    borderRadius: 10,
-    padding: 12,
-    fontSize: 14,
-    minHeight: 80,
-    borderWidth: 1,
-    borderColor: '#2a2a38',
-    textAlignVertical: 'top',
-    marginBottom: 16,
-  },
-  modalActions: { flexDirection: 'row', gap: 10 },
-  modalSkipBtn: {
-    flex: 1,
-    paddingVertical: 13,
-    borderRadius: 12,
-    backgroundColor: '#2a2a38',
-    alignItems: 'center',
-  },
-  modalSkipText: { color: '#888', fontWeight: '600', fontSize: 14 },
-  modalRejectBtn: {
-    flex: 2,
-    paddingVertical: 13,
-    borderRadius: 12,
-    backgroundColor: '#2a1a1a',
-    borderWidth: 1,
-    borderColor: '#ff6b6b',
-    alignItems: 'center',
-  },
-  modalRejectText: { color: '#ff6b6b', fontWeight: '700', fontSize: 14 },
   actions: { flexDirection: 'row', gap: 10 },
   btnReject: {
     flex: 1,
